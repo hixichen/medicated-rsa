@@ -4,23 +4,17 @@ Mediated RSA (mRSA) SDKs in Go, Python, and Rust — an additive split of the
 RSA private exponent between a **member** and a **mediator**, with a shared
 error contract and cross-language test vectors.
 
-**Why am I doing this?** Running more than a handful of Kubernetes clusters
-means every cluster is its own OIDC issuer with its own key: cloud IAM
-provider quotas cap how many you can trust (~100 per AWS account), and every
-trust relationship you add is one more thing to rotate, audit, and misconfigure.
-Mediated RSA gives you the external simplicity of one shared key with the
-internal isolation of per-cluster keys:
+**Why am I doing this?** for fun.
 
-- The fleet's central authority generates one RSA key pair and splits the
-  private exponent additively: `d = d_member + d_mediator mod λ(N)`.
-- Each member (cluster) holds its own `d_member` share; the mediator holds the
-  matching `d_mediator` share. Neither share can sign anything alone.
-- Both parties exponentiate the PKCS#1 v1.5 encoded message with their share,
-  and the product of the two partial signatures is a byte-for-byte standard
-  RSA signature: `s_M · s_Z ≡ EM^d (mod N)`.
-- Revoking a member is instant and surgical: delete its mediator share and it
-  can never sign again. No key rotation, no republishing, zero blast radius for
-  the rest of the fleet.
+> **This is a fun project, not production crypto.** Nothing here is
+> audited or hardened — treat it as a working reference implementation of
+> the BDTW mediated-RSA construction.
+>
+> Also note the clock: NIST's IR 8547 transition plan deprecates classical
+> 112-bit-security algorithms — which includes RSA-2048 — after **2030**,
+> and disallows them entirely after 2035. mRSA is a clever use of 25-year-old
+> math, but the world is moving to post-quantum algorithms; if you're
+> designing something real today, don't build on RSA.
 
 The full design story — why the obvious fixes (merged JWKS, x5c headers,
 central HSM) don't survive production, and why RS256 splits additively while
@@ -136,7 +130,9 @@ rejection, and the error-code contract above.
   constant-time verification from your platform's crypto library; the
   signature bytes are identical, so any conforming RSA verifier accepts
   them.
-- 2048-bit keys are the floor; use 3072 for anything long-lived.
+- 2048-bit keys are the floor for correctness of the code; remember that
+  RSA-2048 is scheduled for deprecation after 2030 (see the note above).
+  This is a toy — enjoy it, don't deploy it.
 
 ## License
 
