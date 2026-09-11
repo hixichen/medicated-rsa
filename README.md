@@ -22,6 +22,26 @@ ECDSA needs multi-round MPC — is in the blog post that motivated this repo:
 **[One Key, a Hundred Clusters: Multi-Cluster JWT Signing with Mediated RSA](
 https://hixichen.github.io/2026/09/10/multi-cluster-jwt-signing-mediated-rsa.html)**
 
+## Related projects
+
+This is one of three takes on the same problem — pods on many clusters
+getting cloud credentials without per-cluster OIDC registration and without
+static secrets:
+
+- [kube-iam-assume](https://github.com/hixichen/kube-iam-assume) — the simple
+case: publish your self-hosted cluster's own JWKS to a public bucket and its
+  native ServiceAccount tokens work with cloud federation like an EKS/GKE
+  cluster. One cluster, one issuer, nothing to build.
+- [kube-oidc-fed](https://github.com/hixichen/kube-oidc-fed) — the federated
+  take: a per-cluster broker validates local ServiceAccount tokens and signs
+  federated JWTs with cluster-unique keys, while a central registry aggregates
+  the keys behind one OIDC issuer. Many clusters, one issuer, blast-radius
+  isolation via separate keys.
+- **medicated-rsa** (this repo) — the mediated take: one shared RSA key, but
+  the private exponent is additively split so no cluster ever holds it. Many
+  clusters, one issuer, isolation via key splitting instead of separate
+  keys — with instant per-member revocation.
+
 ## What's here
 
 The SDKs implement exactly the minimum mediated-RSA core — key generation,
