@@ -1,0 +1,17 @@
+[package]
+name = "medicated-rsa"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "Mediated RSA (mRSA): an additive split of the RSA private exponent between a member and a mediator"
+license = "MIT"
+
+[dependencies]
+num-integer = "0.1"
+num-traits = "0.2"
+rand = "0.8"
+rsa = "0.9"
+
+[dev-dependencies]
+hex = "0.4"
+serde_json = "1"

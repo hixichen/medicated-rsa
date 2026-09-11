@@ -1,0 +1,14 @@
+[project]
+name = "medicated-rsa"
+version = "0.1.0"
+description = "Mediated RSA (mRSA) SDK: an additive split of the RSA private exponent between a member and a mediator"
+readme = "README.md"
+requires-python = ">=3.13"
+license = { text = "MIT" }
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["medicated_rsa"]
