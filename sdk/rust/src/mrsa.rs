@@ -91,7 +91,10 @@ impl KeyPair {
     /// immediately after this returns.
     pub fn split(&self) -> Result<(KeyShare, KeyShare), Error> {
         let d_member = random_below(&self.lambda)?;
-        let d_mediator = (&self.d - &d_member) % &self.lambda;
+        // (d - d_member) mod λ — written as (d + λ - d_member) mod λ because
+        // BigUint subtraction panics on underflow when d_member > d.
+        // d_member < λ and d ≥ 1, so d + λ - d_member > 0 always.
+        let d_mediator = (self.d.clone() + &self.lambda - &d_member) % &self.lambda;
         if d_mediator.is_zero() {
             // d_member happened to equal d mod λ(N): redraw rather than
             // hand out a zero share.
@@ -183,7 +186,8 @@ pub fn combine(a: &[u8], b: &[u8], n: &BigUint) -> Result<Vec<u8>, Error> {
 
 /// Check that `sig` is a valid PKCS#1 v1.5 signature over `em`.
 ///
-/// Returns [`ErrorCode::VerifyFailed`] if the signature does not verify.
+/// Returns an [`Error`] with code [`ErrorCode::VerifyFailed`] if the
+/// signature does not verify.
 /// Verification is standard RSA — any conforming library produces the
 /// same result.
 pub fn verify(public_key: &PublicKey, em: &[u8], sig: &[u8]) -> Result<(), Error> {

@@ -4,3 +4,4 @@ target/
 Cargo.lock
 dist/
 *.egg-info/
+build/

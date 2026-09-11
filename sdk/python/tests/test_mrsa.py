@@ -7,6 +7,7 @@ the error contract. Pure standard library — no third-party dependencies.
 Run with:  python3 -m unittest discover -s tests -v
 """
 
+import json
 import unittest
 from pathlib import Path
 
@@ -18,13 +19,10 @@ from medicated_rsa.errors import (
     INVALID_KEY,
     INVALID_SHARE,
     KEY_GEN_FAILED,
-    PARTIAL_SIGN_FAILED,
     SPLIT_FAILED,
     VERIFY_FAILED,
     MRSAError,
 )
-
-import json
 
 VECTOR_PATH = Path(__file__).resolve().parents[2] / "testdata" / "vector.json"
 

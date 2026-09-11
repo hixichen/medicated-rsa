@@ -55,7 +55,3 @@ class MRSAError(Exception):
         self.message = message
         self.name = _CODE_NAMES.get(code, "UNKNOWN")
         super().__init__(f"mrsa: {self.name} (code {code}): {message}")
-
-
-def _error(code: int, message: str) -> MRSAError:
-    return MRSAError(code, message)

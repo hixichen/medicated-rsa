@@ -29,7 +29,7 @@ getting cloud credentials without per-cluster OIDC registration and without
 static secrets:
 
 - [kube-iam-assume](https://github.com/hixichen/kube-iam-assume) — the simple
-case: publish your self-hosted cluster's own JWKS to a public bucket and its
+  case: publish your self-hosted cluster's own JWKS to a public bucket and its
   native ServiceAccount tokens work with cloud federation like an EKS/GKE
   cluster. One cluster, one issuer, nothing to build.
 - [kube-oidc-fed](https://github.com/hixichen/kube-oidc-fed) — the federated
@@ -81,7 +81,8 @@ kp, _ := mrsa.GenerateKeyPair(2048)
 member, mediator, _ := kp.Split() // d = d_member + d_mediator mod λ(N)
 
 digest := sha256.Sum256(message)
-em, _ := mrsa.EncodeEM(digest[:], 256)
+emLen := (kp.N.BitLen() + 7) / 8 // modulus size in bytes (256 for RSA-2048)
+em, _ := mrsa.EncodeEM(digest[:], emLen)
 
 sM, _ := mrsa.PartialSign(member, em)    // member's share
 sZ, _ := mrsa.PartialSign(mediator, em)  // mediator's share
